@@ -22,7 +22,7 @@ const (
 )
 
 type Conn struct {
-	conn          net.Conn
+	Conn          net.Conn
 	controlReader *bufio.Reader
 	controlWriter *bufio.Writer
 	dataConn      DataSocket
@@ -58,7 +58,7 @@ func (conn *Conn) passiveListenIP() string {
 	if len(conn.PublicIp()) > 0 {
 		return conn.PublicIp()
 	}
-	return conn.conn.LocalAddr().String()
+	return conn.Conn.LocalAddr().String()
 }
 
 func (conn *Conn) PassivePort() int {
@@ -123,7 +123,7 @@ func (conn *Conn) Serve() {
 
 // Close will manually close this connection, even if the client isn't ready.
 func (conn *Conn) Close() {
-	conn.conn.Close()
+	conn.Conn.Close()
 	conn.closed = true
 	if conn.dataConn != nil {
 		conn.dataConn.Close()
@@ -133,10 +133,10 @@ func (conn *Conn) Close() {
 
 func (conn *Conn) upgradeToTLS() error {
 	conn.logger.Print(conn.sessionID, "Upgrading connectiion to TLS")
-	tlsConn := tls.Server(conn.conn, conn.tlsConfig)
+	tlsConn := tls.Server(conn.Conn, conn.tlsConfig)
 	err := tlsConn.Handshake()
 	if err == nil {
-		conn.conn = tlsConn
+		conn.Conn = tlsConn
 		conn.controlReader = bufio.NewReader(tlsConn)
 		conn.controlWriter = bufio.NewWriter(tlsConn)
 		conn.tls = true
