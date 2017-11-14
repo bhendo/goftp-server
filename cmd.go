@@ -559,7 +559,7 @@ func (cmd commandPass) RequireAuth() bool {
 }
 
 func (cmd commandPass) Execute(conn *Conn, param string) {
-	ok, err := conn.server.Auth.CheckPasswd(conn.reqUser, param)
+	ok, err := conn.server.Auth.CheckPasswd(conn.reqUser, param, conn.Conn)
 	if err != nil {
 		conn.writeMessage(550, "Checking password error")
 		return
