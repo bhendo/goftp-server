@@ -364,11 +364,13 @@ func (cmd commandList) Execute(conn *Conn, param string) {
 	info, err := conn.driver.Stat(path)
 	if err != nil {
 		conn.writeMessage(550, err.Error())
+		conn.sendOutofbandData(nil)
 		return
 	}
 
 	if !info.IsDir() {
 		conn.logger.Printf(conn.sessionID, "%s is not a dir.\n", path)
+		conn.sendOutofbandData(nil)
 		return
 	}
 	var files []FileInfo
@@ -378,6 +380,7 @@ func (cmd commandList) Execute(conn *Conn, param string) {
 	})
 	if err != nil {
 		conn.writeMessage(550, err.Error())
+		conn.sendOutofbandData(nil)
 		return
 	}
 
@@ -421,10 +424,12 @@ func (cmd commandNlst) Execute(conn *Conn, param string) {
 	info, err := conn.driver.Stat(path)
 	if err != nil {
 		conn.writeMessage(550, err.Error())
+		conn.sendOutofbandData(nil)
 		return
 	}
 	if !info.IsDir() {
 		// TODO: should we show the file description?
+		conn.sendOutofbandData(nil)
 		return
 	}
 
@@ -435,6 +440,7 @@ func (cmd commandNlst) Execute(conn *Conn, param string) {
 	})
 	if err != nil {
 		conn.writeMessage(550, err.Error())
+		conn.sendOutofbandData(nil)
 		return
 	}
 	conn.sendOutofbandData(listFormatter(files).Short())
