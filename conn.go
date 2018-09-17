@@ -1,3 +1,7 @@
+// Copyright 2018 The goftp Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
 package server
 
 import (
@@ -9,12 +13,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	mrand "math/rand"
 	"net"
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	mrand "math/rand"
 )
 
 const (
@@ -105,7 +108,7 @@ func (conn *Conn) Serve() {
 		line, err := conn.controlReader.ReadString('\n')
 		if err != nil {
 			if err != io.EOF {
-				conn.logger.Print(conn.sessionID, fmt.Sprintln("read error:", err))
+				conn.logger.Print(conn.sessionID, fmt.Sprint("read error:", err))
 			}
 
 			break
@@ -199,7 +202,7 @@ func (conn *Conn) writeMessageMultiline(code int, message string) (wrote int, er
 //    buildpath("/files/two.txt")
 //    => "/files/two.txt"
 //    buildpath("files/two.txt")
-//    => "files/two.txt"
+//    => "/files/two.txt"
 //    buildpath("/../../../../etc/passwd")
 //    => "/etc/passwd"
 //
